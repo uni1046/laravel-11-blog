@@ -37,4 +37,23 @@ class UsersController extends Controller
 
         return redirect()->route('users.show', $user)->with('success', 'User created successfully.');
     }
+
+    public function update(Request $request, User $user): RedirectResponse
+    {
+        // Validate the request data
+        $request->validate([
+            'name' => 'required|string|max:50',
+            'password' => 'nullable|string|min:6|confirmed',
+        ]);
+
+
+        $data = $request->only('name');
+        if ($request->filled('password')) {
+            $data = $request->only('name','password');
+        }
+        $user->update($data);
+
+        // Redirect to the user's profile with a session flash message.
+        return redirect()->route('users.show', $user)->with('success', 'User updated successfully.');
+    }
 }
