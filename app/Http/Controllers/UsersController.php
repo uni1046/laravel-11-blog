@@ -33,6 +33,8 @@ class UsersController extends Controller
             'password' => bcrypt($request->password)
         ]);
 
+        auth()->login($user);
+
         return redirect()->route('users.show', $user)->with('success', 'User created successfully.');
     }
 }
