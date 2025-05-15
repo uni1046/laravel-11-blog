@@ -55,6 +55,9 @@ class SessionsController extends Controller
             $request->session()->regenerate();
             $fallback = route('users.show', auth()->user());
             return redirect()->intended($fallback)->with('success', 'Logged in successfully.');
+            auth()->logout();
+            return redirect()->route('home')->with('warning', 'Your account is not activated, please check your email.');
+
         }
 
         return back()->withInput()->with('danger', 'Invalid credentials.');

@@ -35,6 +35,10 @@ use Illuminate\Notifications\Notifiable;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  * @property int $is_admin
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIsAdmin($value)
+ * @property int $activated
+ * @property string|null $activation_token
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereActivated($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereActivationToken($value)
  * @mixin \Eloquent
  */
 class User extends Authenticatable
