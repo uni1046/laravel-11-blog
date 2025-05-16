@@ -82,8 +82,7 @@ class UsersController extends Controller
             'password' => bcrypt($request->password)
         ]);
 
-        // Log the user in
-        auth()->sendEmailConfirmationTo($user);
+        $this->sendEmailConfirmationTo($user);
 
         // Redirect to the user's profile with a session flash message.
         return redirect()->route('users.show', $user)->with('success', 'User created successfully.Please check your email to activate your account.');
@@ -166,7 +165,6 @@ class UsersController extends Controller
     {
         $view = 'emails.confirm';
         $data = compact('user');
-
         $to = $user->email;
         $subject = "感谢注册 uni1046's blog 应用！请确认你的邮箱。";
 
