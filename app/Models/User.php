@@ -5,11 +5,12 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $name
@@ -68,6 +69,21 @@ class User extends Authenticatable
     ];
 
     /**
+     * 在创建用户的时候生成用户的 activation_token
+     *
+     * @return void
+     */
+    public static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function (User $user) {
+            // 生成激活令牌
+            $user->activation_token = str()->random(30);
+        });
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -91,5 +107,17 @@ class User extends Authenticatable
         $hash = md5(strtolower(trim($this->attributes['email'])));
         return "https://www.gravatar.com/avatar/$hash?s=$size";
     }
+
+    /**
+     * User has many statuses.
+     *
+     * @return HasMany
+     */
+    public function statuses(): HasMany
+    {
+        return $this->hasMany(Status::class);
+    }
 }
+
+
 
