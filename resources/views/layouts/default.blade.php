@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>@yield('title', 'Weibo App') - Laravel blog</title>
+    <title>@yield('title', 'uni1046')</title>
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 <body>

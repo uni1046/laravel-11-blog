@@ -23,11 +23,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Status whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Status whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Status whereUserId($value)
+ * @method static \Database\Factories\StatusFactory factory($count = null, $state = [])
  * @mixin \Eloquent
  */
 class Status extends Model
 {
     use HasFactory;
+
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<string>
+     */
+    protected $fillable = ['content'];
 
     /**
      * Status belongs to a user.
