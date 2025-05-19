@@ -10,7 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property string $name
@@ -40,6 +40,8 @@ use Illuminate\Notifications\Notifiable;
  * @property string|null $activation_token
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereActivated($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereActivationToken($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Status> $statuses
+ * @property-read int|null $statuses_count
  * @mixin \Eloquent
  */
 class User extends Authenticatable
