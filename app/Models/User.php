@@ -10,7 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $name
@@ -118,6 +118,12 @@ class User extends Authenticatable
     public function statuses(): HasMany
     {
         return $this->hasMany(Status::class);
+    }
+
+    public function feed(): HasMany
+    {
+        return $this->statuses()
+            ->orderBy('created_at', 'desc');
     }
 }
 
