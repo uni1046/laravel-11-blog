@@ -31,3 +31,8 @@ Route::resource('statuses', StatusesController::class)->only(['store', 'destroy'
 
 // 测试页面
 Route::get('tests', [TestsController::class, 'index'])->name('tests.index');
+
+
+
+Route::get('users/{user}/followings', [UsersController::class, 'followings'])->name('users.followings');
+Route::get('users/{user}/followers', [UsersController::class, 'followers'])->name('users.followers');
