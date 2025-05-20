@@ -4,47 +4,58 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
+use Eloquent;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $name
  * @property string $email
- * @property \Illuminate\Support\Carbon|null $email_verified_at
+ * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $remember_token
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmailVerifiedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
+ * @method static UserFactory factory($count = null, $state = [])
+ * @method static Builder<static>|User newModelQuery()
+ * @method static Builder<static>|User newQuery()
+ * @method static Builder<static>|User query()
+ * @method static Builder<static>|User whereCreatedAt($value)
+ * @method static Builder<static>|User whereEmail($value)
+ * @method static Builder<static>|User whereEmailVerifiedAt($value)
+ * @method static Builder<static>|User whereId($value)
+ * @method static Builder<static>|User whereName($value)
+ * @method static Builder<static>|User wherePassword($value)
+ * @method static Builder<static>|User whereRememberToken($value)
+ * @method static Builder<static>|User whereUpdatedAt($value)
  * @property int $is_admin
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIsAdmin($value)
+ * @method static Builder<static>|User whereIsAdmin($value)
  * @property int $activated
  * @property string|null $activation_token
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereActivated($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereActivationToken($value)
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Status> $statuses
+ * @method static Builder<static>|User whereActivated($value)
+ * @method static Builder<static>|User whereActivationToken($value)
+ * @property-read Collection<int, Status> $statuses
  * @property-read int|null $statuses_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Status> $feed
+ * @property-read Collection<int, Status> $feed
  * @property-read int|null $feed_count
- * @mixin \Eloquent
+ * @property-read Collection<int, User> $followers
+ * @property-read int|null $followers_count
+ * @property-read Collection<int, User> $followings
+ * @property-read int|null $followings_count
+ * @mixin Eloquent
  */
 class User extends Authenticatable
 {
@@ -127,7 +138,62 @@ class User extends Authenticatable
         return $this->statuses()
             ->orderBy('created_at', 'desc');
     }
+
+    /**
+     * User has many followers.
+     *
+     * @return BelongsToMany
+     */
+    public function followers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'followers', 'user_id', 'follower_id');
+    }
+
+    /**
+     * User has many followings.
+     *
+     * @return BelongsToMany
+     */
+    public function followings(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'followers', 'follower_id', 'user_id');
+    }
+
+    /**
+     * 关注用户
+     *
+     * @param $userIds
+     * @return void
+     */
+    public function follow($userIds): void
+    {
+        // 这里需要注意的是, 我们在使用 sync() 方法之前要先有定义好对应的关系
+        // sync(..., false) 只会添加新的记录，不会删除旧的记录
+        $this->followings()->sync($userIds, false);
+    }
+
+    /**
+     * 取消关注用户
+     *
+     * @param $userIds
+     * @return void
+     */
+    public function unfollow($userIds): void
+    {
+        // 这里需要注意的是, 我们在使用 detach() 方法之前要先有定义好对应的关系
+        // detach(ids) 删除指定的记录
+        $this->followings()->detach($userIds);
+    }
+
+    /**
+     * 判断当前用户是否关注了指定用户
+     *
+     * @param User $user
+     * @return bool
+     */
+    public function isFollowing(User $user): bool
+    {
+        // 使用 contains() 方法判断当前用户的关注列表中是否包含指定用户的 id
+        return $this->followings->contains($user->id);
+    }
 }
-
-
-

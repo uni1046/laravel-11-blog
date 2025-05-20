@@ -1,10 +1,5 @@
 <footer class="footer">
-    <img class="brand-icon" src="{{ asset('favicon.ico') }}" alt="Laravel Logo">
-    <a href="https://laravel.com/" target=_blank class="text-decoration-none">
-        Laravel
-    </a>
-
-    <div class="float-end">
-        <a href="{{ route("about") }}" class="text-decoration-none">About</a>
-    </div>
+    <span class="tw-mt-5 tw-mb-10">
+        &copy; <a href="https://uni1046.com" class="text-decoration-none">LuStormstout</a>
+    </span>
 </footer>
